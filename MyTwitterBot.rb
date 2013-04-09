@@ -2,6 +2,7 @@
 require './TwitterBot.rb' # TwitterBot.rbの読み込み
 require 'yaml'
 require 'json'
+require 'open-uri'
 
 #---------- MyTwitterBot ----------                                                                         
 class MyTwitterBot < TwitterBot
@@ -76,12 +77,27 @@ class MyTwitterBot < TwitterBot
     
   end
   
+  #--------- 起動日が雨だと傘持ち込みtweet  ---------
+  def notice_weather
+    open("http://weather.livedoor.com/forecast/webservice/json/v1?city=330010"){|io|
+      weathers = JSON.parse(io.read)
+      tweather = weathers['forecasts'].shift['telop']
+      if (/雨/ =~ tweather) != nil 
+        mes = "みなさん今日のお天気は" + tweather + "です! 傘を忘れずに持ってきましょう!"
+        self.tweet(mes)
+      end
+    }
+  end
+
+  
+
 end
 
 #MyTwitterBotの生成
 print "Start MyTwitterBot.\n"
 mbot = MyTwitterBot.new()
 #mbot.answer_say
-mbot.notice_birth
+#mbot.notice_birth
+mbot.notice_weather
 print "End MyTwitterBot.\n"
 
