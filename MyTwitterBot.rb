@@ -1,8 +1,12 @@
 # -*- coding: utf-8 -*-
 require './TwitterBot.rb' # TwitterBot.rbの読み込み
+require './GCal.rb'       # GCal.rbの読み込み
 require 'yaml'
 require 'json'
 require 'open-uri'
+require 'rubygems'
+require 'google/api_client'
+
 
 #---------- MyTwitterBot ----------                                                                         
 class MyTwitterBot < TwitterBot
@@ -89,8 +93,19 @@ class MyTwitterBot < TwitterBot
     }
   end
 
+  #--------- 打合せ3日以内ならツイート ---------
+  def notice_meeting
+    gc = GCal.new()
+    meetings = gc.get_meeting
+    meetings.each do |meeting|
+      left = gc.how_many_days_left( meeting['date_time'] )
+      if left['days'] <= 3
+        msg = "GNグループのみなさん！ " + meeting['summary'] + "があと" + (left["days"]).to_s + "日と" + (left["hours"]).to_s + "時間に迫っています!" 
+        self.tweet(msg)
+      end
+    end
+  end
   
-
 end
 
 #MyTwitterBotの生成
@@ -98,6 +113,9 @@ print "Start MyTwitterBot.\n"
 mbot = MyTwitterBot.new()
 #mbot.answer_say
 #mbot.notice_birth
-mbot.notice_weather
+#mbot.notice_weather
+#mbot.connect_gcalendar
+#mbot.get_schedule
+mbot.notice_meeting
 print "End MyTwitterBot.\n"
 
