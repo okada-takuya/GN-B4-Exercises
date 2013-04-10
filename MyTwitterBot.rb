@@ -14,6 +14,8 @@ class MyTwitterBot < TwitterBot
   def initialize
     super
     self.get_bot_id
+    @gc = GCal.new()
+    @NOW = Time.now 
   end
   
   #--------- 以前と同じ内容にならないよう時間を付け加える ---------
@@ -95,14 +97,26 @@ class MyTwitterBot < TwitterBot
 
   #--------- 打合せ3日以内ならツイート ---------
   def notice_meeting
-    gc = GCal.new()
-    meetings = gc.get_meeting
+    @gc = GCal.new()
+    meetings = @gc.get_meeting
     meetings.each do |meeting|
-      left = gc.how_many_days_left( meeting['date_time'] )
+      left = @gc.how_many_days_left( meeting['date_time'] )
       if left['days'] <= 3
-        msg = "GNグループのみなさん！ " + meeting['summary'] + "があと" + (left["days"]).to_s + "日と" + (left["hours"]).to_s + "時間に迫っています!" 
+        msg = "GNグループのみなさん， " + meeting['summary'] + "があと" + (left["days"]).to_s + "日と" + (left["hours"]).to_s + "時間に迫っています．" 
         self.tweet(msg)
       end
+    end
+  end
+
+  #--------- 出張をお知らせ  ---------
+  def notice_business_trip
+    b_trips = @gc.get_business_trip
+    b_trips.each do |b_trip|
+      if b_trip['date_s'] <= @NOW && @NOW <= b_trip['date_e']
+        msg = "今日は" + b_trip['summary'] + "です． 今回の出張は" + b_trip['date_e'].strftime("%m月%d日") + "までです．"
+        self.tweet( msg )
+      end
+
     end
   end
   
@@ -111,11 +125,12 @@ end
 #MyTwitterBotの生成
 print "Start MyTwitterBot.\n"
 mbot = MyTwitterBot.new()
-#mbot.answer_say
-#mbot.notice_birth
-#mbot.notice_weather
-#mbot.connect_gcalendar
-#mbot.get_schedule
+mbot.answer_say
+mbot.notice_birth
+mbot.notice_weather
+mbot.connect_gcalendar
+mbot.get_schedule
 mbot.notice_meeting
+mbot.notice_business_trip
 print "End MyTwitterBot.\n"
 
