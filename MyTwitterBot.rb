@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 require './TwitterBot.rb' # TwitterBot.rbの読み込み
 require './GCal.rb'       # GCal.rbの読み込み
 require 'yaml'
@@ -17,13 +18,34 @@ class MyTwitterBot < TwitterBot
     @gc = GCal.new()
     @NOW = Time.now 
   end
+
+  #--------- 140字以上の文字列を切り取る ---------
+  def cut_msg(msg)
+    if msg.length > 140
+      n_msg = msg[0, 139]
+      puts "ERROR: Message is longer than 140 characters."
+      puts "       Change message =>" + n_msg
+      return n_msg
+    end
+    return msg
+  end
+
+  #--------- tweet投稿失敗か判定 ---------
+  def is_tweeted( res, msg )
+    /HTTP(.+):/ =~ res.to_s
+    if (/Forbidden/ =~ $1) != nil
+      puts "ERROR: Can't tweet."
+      puts "       Blocked message =>" + msg
+    end
+  end
   
   #--------- 以前と同じ内容にならないよう時間を付け加える ---------
-  def tweet( message )
+  def tweet( msg )
     sleep(2)
-    time = Time.now
-    message << " tweet by bot." + time.to_s
-    super
+    msg << " tweet by bot." + @NOW.to_s
+    msg = self.cut_msg(msg)
+    res = super
+    is_tweeted( res, msg )
   end
   
   #--------- BotのIDを取得する ---------
@@ -125,12 +147,13 @@ end
 #MyTwitterBotの生成
 print "Start MyTwitterBot.\n"
 mbot = MyTwitterBot.new()
-mbot.answer_say
-mbot.notice_birth
-mbot.notice_weather
-mbot.connect_gcalendar
-mbot.get_schedule
-mbot.notice_meeting
-mbot.notice_business_trip
+# mbot.answer_say
+# mbot.notice_birth
+# mbot.notice_weather
+# mbot.connect_gcalendar
+# mbot.get_schedule
+# mbot.notice_meeting
+# mbot.notice_business_trip
+temp = mbot.tweet("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
 print "End MyTwitterBot.\n"
 
