@@ -19,15 +19,14 @@ class MyTwitterBot < TwitterBot
     @NOW = Time.now 
   end
 
-  #--------- 140字以上の文字列を切り取る ---------
-  def cut_msg(msg)
+  #--------- 140字以上の文字列か判定 ---------
+  def is_over_140(msg)
     if msg.length > 140
-      n_msg = msg[0, 139]
       puts "ERROR: Message is longer than 140 characters."
-      puts "       Change message =>" + n_msg
-      return n_msg
+      puts "       Stop message =>" + msg
+      return true
     end
-    return msg
+    return false
   end
 
   #--------- tweet投稿失敗か判定 ---------
@@ -43,9 +42,10 @@ class MyTwitterBot < TwitterBot
   def tweet( msg )
     sleep(2)
     msg << " tweet by bot." + @NOW.to_s
-    msg = self.cut_msg(msg)
-    res = super
-    is_tweeted( res, msg )
+    if is_over_140(msg) == false
+      res = super
+      is_tweeted( res, msg )
+    end
   end
   
   #--------- BotのIDを取得する ---------
