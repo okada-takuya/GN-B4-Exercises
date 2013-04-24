@@ -147,13 +147,12 @@ end
 #MyTwitterBotの生成
 print "Start MyTwitterBot.\n"
 mbot = MyTwitterBot.new()
-# mbot.answer_say
-# mbot.notice_birth
-# mbot.notice_weather
-# mbot.connect_gcalendar
-# mbot.get_schedule
-# mbot.notice_meeting
-# mbot.notice_business_trip
-temp = mbot.tweet("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+mbot.answer_say
+mbot.notice_birth
+mbot.notice_weather
+mbot.connect_gcalendar
+mbot.get_schedule
+mbot.notice_meeting
+mbot.notice_business_trip
 print "End MyTwitterBot.\n"
 
